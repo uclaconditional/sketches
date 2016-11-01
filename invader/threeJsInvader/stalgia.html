@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>studio mark three-d</title>
+  </head>
+  <body>
+
+  </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r76/three.min.js"></script>
+    <script>
+    //invader by Stalgia Grigg
+        window.onload = function(){
+          init();
+        };
+
+        var scene, 
+            camera, 
+            renderer, 
+            geometry, 
+            material,
+            boxes = [], 
+            num = 0,
+            mesh;
+
+        function init() {
+          boxSize = window.innerHeight/7;
+
+          scene = new THREE.Scene();
+
+          camera = new THREE.PerspectiveCamera(30, window.innerWidth/ window.innerHeight, 1, 10000);
+          camera.position.z = 2500;
+
+          material = new THREE.MeshStandardMaterial( {
+              color: new THREE.Color( 0xffffff ),
+              roughness: 0.5,
+              metalness: 0,
+              shading: THREE.FlatShading
+          } );
+
+          geometry = new THREE.BoxGeometry(boxSize,boxSize,boxSize);
+
+          var light = new THREE.DirectionalLight( 0xffffff, 1.5);
+          light.position.set(1,1,1);
+          scene.add(light);
+
+          renderer = new THREE.WebGLRenderer({ antialias: true });
+          renderer.setSize( window.innerWidth, window.innerHeight );
+          document.body.appendChild( renderer.domElement );
+          renderer.setPixelRatio( window.devicePixelRatio );
+          renderer.setClearColor(new THREE.Color( 0x0000ff ));
+
+
+          
+          for(var x = -window.innerHeight/2; x < window.innerHeight/2; x+= boxSize) {
+            for(var y = -window.innerHeight/2; y < window.innerHeight/2; y+= boxSize) {
+              boxes[num] = new THREE.Mesh( geometry, material );
+              boxes[num].position.x = x;
+              boxes[num].position.y = y;
+              scene.add(boxes[num]);
+              num++;
+            }
+          }
+
+          animate();
+          generate();
+        };
+
+        function animate() {
+
+          renderer.clear();
+          requestAnimationFrame( animate );
+
+          renderer.render( scene, camera );
+
+          for(var i=0; i<boxes.length; i++) {
+             boxes[i].rotation.x += 0.002;
+          }
+          
+        };
+
+        function generate() {
+        for(var i=0; i<boxes.length;i++){
+          if(Math.random() < 0.5){
+              boxes[i].visible = true;
+            } else {
+              boxes[i].visible = false;
+            }
+        }
+        setTimeout(function() {
+        requestAnimationFrame(generate);
+        }, 13000 );
+        }
+
+
+      </script>
+</html>

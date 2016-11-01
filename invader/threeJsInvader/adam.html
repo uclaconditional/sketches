@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>studio mark three-d</title>
+    <style>
+    html, body {
+      padding: 0px;
+      margin: 0px;
+    }
+    </style>
+  </head>
+  <body>
+
+  </body>
+    <script src="https://ajax.googleapis.com/ajax/libs/threejs/r76/three.min.js"></script>
+    <script>
+    //invader by Stalgia Grigg
+    //slight tweak by Adam Ferriss
+        window.onload = function(){
+          init();
+        };
+
+        var scene, 
+            camera, 
+            renderer, 
+            geometry, 
+            material,
+            boxes = [], 
+            num = 0,
+            mesh;
+
+        function init() {
+          boxSize = window.innerHeight/5;
+
+          scene = new THREE.Scene();
+
+          camera = new THREE.PerspectiveCamera(30, window.innerWidth/ window.innerHeight, 1, 10000);
+          camera.position.z = 2500;
+
+          material = new THREE.MeshStandardMaterial( {
+              color: new THREE.Color( 0xffffff ),
+              roughness: 0.5,
+              metalness: 0,
+              shading: THREE.FlatShading
+          } );
+
+          geometry = new THREE.BoxGeometry(boxSize,boxSize,boxSize);
+
+          var light = new THREE.DirectionalLight( 0xffffff, 1.5);
+          light.position.set(1,1,1);
+          scene.add(light);
+
+          renderer = new THREE.WebGLRenderer({ antialias: true });
+          renderer.setSize( window.innerWidth, window.innerHeight );
+          document.body.appendChild( renderer.domElement );
+          renderer.setPixelRatio( window.devicePixelRatio );
+          renderer.setClearColor(new THREE.Color( 0x0000ff ));
+
+          var xInc = 0;
+          var yInc = 0;
+          for(var y = -window.innerHeight/2; y < window.innerHeight/2; y+= boxSize) {
+            
+            for(var x = -window.innerHeight/2; x < window.innerHeight/2; x+= boxSize) {
+              var loc = xInc + yInc * 5;
+
+              boxes[loc] = new THREE.Mesh( geometry, material );
+              boxes[loc].position.x = x;
+              boxes[loc].position.y = y;
+              scene.add(boxes[loc]);
+
+              num++;
+              xInc = (xInc + 1 ) % 5;
+            }
+            yInc++;
+          }
+
+          animate();
+          generate();
+        };
+
+        function animate() {
+
+          requestAnimationFrame( animate );
+
+          renderer.render( scene, camera );
+
+          for(var i=0; i<boxes.length; i++) {
+             boxes[i].rotation.x += 0.002;
+          }
+          
+        }
+
+        function generate() {
+
+        for(var y = 0; y < 5; y++){
+          for(var x = 0; x < 5; x++){
+            var loc = x + y*5;
+            if(Math.random() < 0.5){
+              if(x == 0 || x == 1 || x == 2){
+                boxes[loc].visible = true;
+              }
+              if(x == 3){
+                  boxes[loc].visible = boxes[loc-2].visible;
+               }
+              if(x == 4){
+                  boxes[loc].visible = boxes[loc-4].visible;
+              }
+            } else {
+              if(x == 0 || x == 1 || x == 2){
+                boxes[loc].visible = false;
+              }
+              if(x == 3){
+                  boxes[loc].visible = boxes[loc-2].visible;
+               }
+              if(x == 4){
+                  boxes[loc].visible = boxes[loc-4].visible;
+              }
+            }
+          }
+        }
+
+        setTimeout(function() {
+        requestAnimationFrame(generate);
+        }, 13000 );
+        }
+
+
+      </script>
+</html>
